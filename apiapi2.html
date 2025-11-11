@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Module API Specification</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f9f9f9; }
+        .container { max-width: 900px; margin: 0 auto; background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #1e3a8a; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; margin-bottom: 20px; }
+        h2 { color: #4b5563; margin-top: 30px; padding-left: 10px; border-left: 4px solid #9ca3af; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 10px 15px; text-align: left; border-bottom: 1px solid #e5e7eb; font-size: 0.95em; }
+        th { background-color: #f3f4f6; color: #1f2937; font-weight: 600; }
+        .method-post { background-color: #10b981; color: white; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+        .method-get { background-color: #3b82f6; color: white; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+        .method-patch { background-color: #f59e0b; color: white; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+        .method-delete { background-color: #ef4444; color: white; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+        .auth-leader { background-color: #a855f7; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.8em; }
+        .auth-member { background-color: #14b8a6; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.8em; }
+        pre { background-color: #1f2937; color: #e2e8f0; padding: 15px; border-radius: 6px; overflow-x: auto; font-size: 0.9em; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Task Module API 명세서</h1>
+        <p>기본 경로: <code>/tasks</code></p>
+        <p>인증 필수: 모든 API는 JWT (<code>Authorization: Bearer Token</code>)를 요구합니다.</p>
+
+        <h2>1. 할 일 CRUD 기능</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>설명</th>
+                    <th>경로</th>
+                    <th>Method</th>
+                    <th>필수 권한</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>T-01</td>
+                    <td>할 일 등록 (Task Creation)</td>
+                    <td><code>/tasks/create</code></td>
+                    <td><span class="method-post">POST</span></td>
+                    <td><span class="auth-leader">그룹장 (Leader)</span></td>
+                </tr>
+                <tr>
+                    <td>T-02</td>
+                    <td>할 일 상태 변경</td>
+                    <td><code>/tasks/:taskId/status</code></td>
+                    <td><span class="method-patch">PATCH</span></td>
+                    <td><span class="auth-member">담당자 또는 그룹장</span></td>
+                </tr>
+                <tr>
+                    <td>T-04</td>
+                    <td>할 일 수정</td>
+                    <td><code>/tasks/:taskId</code></td>
+                    <td><span class="method-patch">PATCH</span></td>
+                    <td><span class="auth-leader">그룹장 (Leader)</span></td>
+                </tr>
+                <tr>
+                    <td>T-05</td>
+                    <td>할 일 삭제</td>
+                    <td><code>/tasks/:taskId</code></td>
+                    <td><span class="method-delete">DELETE</span></td>
+                    <td><span class="auth-leader">그룹장 (Leader)</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>2. 할 일 조회 (T-03)</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>설명</th>
+                    <th>경로</th>
+                    <th>Method</th>
+                    <th>필수 권한</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>T-03</td>
+                    <td>특정 방의 할 일 목록 조회</td>
+                    <td><code>/tasks/room/:roomId</code></td>
+                    <td><span class="method-get">GET</span></td>
+                    <td><span class="auth-member">방 멤버 모두</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>3. 요청/응답 스키마 요약</h2>
+
+        <h3>T-01: 할 일 등록 (POST /tasks/create)</h3>
+        <p><strong>요청 Body (Input DTO):</strong></p>
+        <pre>{
+    "roomId": 1, 
+    "assignedUserId": 2,  // 할당된 멤버 ID (null 허용)
+    "title": "주간 거실 청소",
+    "description": "창틀 및 베란다 포함",
+    "repeatRule": "WEEKLY" | "DAILY" | "NONE",
+    "dueDate": "2025-10-28" // YYYY-MM-DD 형식
+}</pre>
+
+        <h3>T-02: 할 일 상태 변경 (PATCH /tasks/:taskId/status)</h3>
+        <p><strong>요청 Body (Input DTO):</strong></p>
+        <pre>{
+    "status": "DONE" | "TODO" | "IN_PROGRESS"
+}</pre>
+        <p><strong>주요 로직:</strong> Task ID는 경로 파라미터(<code>:taskId</code>)로 전달하며, <code>RoomRoleGuard</code>와 <code>TasksService</code>에서 **Task 담당자** 또는 **그룹장**인지 확인합니다.</p>
+        
+        <h3>T-03: 할 일 목록 조회 응답 예시</h3>
+        <p><strong>응답 Body (Output DTO):</strong></p>
+        <pre>[
+    {
+        "id": 1,
+        "title": "주간 거실 청소",
+        "status": "TODO",
+        "dueDate": "2025-10-28",
+        "assignedUser": {
+            "id": 2,
+            "nickname": "kimkim" // 관계(relations)를 통해 담당자 닉네임 제공
+        }
+    }
+]</pre>
+
+    </div>
+</body>
+</html>

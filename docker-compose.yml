@@ -1,0 +1,52 @@
+# C:\proj\RoomLink\docker-compose.yml (수정)
+
+version: '3.8'
+
+services:
+  # 1. NestJS 백엔드 서비스
+  backend:
+    build:
+      # 💡 context: 빌드를 시작할 디렉토리 (여기서는 backend 폴더)
+      context: ./backend 
+      # 💡 dockerfile: backend 폴더 내 Dockerfile을 사용하므로, 파일 이름만 지정
+      dockerfile: Dockerfile 
+    container_name: roomlink-backend
+    ports:
+      - "3000:3000" 
+    depends_on:
+      - postgres 
+    # ... (environment, restart 등 나머지 설정 유지)
+    environment:
+      DB_HOST: postgres 
+      DB_PORT: 5432
+      DB_USER: testuser
+      DB_PASS: dovmfcom45@
+      DB_NAME: roomlinkdb
+      
+      PORT: 3000
+      NODE_ENV: production
+      
+      JWT_SECRET: super-secure-local-secret
+      JWT_EXPIRES_IN: 1d
+      JWT_REFRESH_SECRET: super-secure-local-refresh-secret-7d
+    
+    restart: always
+
+  # 2. PostgreSQL 데이터베이스 서비스 (유지)
+  postgres:
+    # ... (생략) ...
+    image: postgres:14-alpine
+    container_name: roomlink-postgres
+    environment:
+      POSTGRES_USER: testuser 
+      POSTGRES_PASSWORD: dovmfcom45@
+      POSTGRES_DB: roomlinkdb
+    ports:
+      - "5432:5432" 
+    volumes:
+      - postgres_data:/var/lib/postgresql/data 
+    restart: always
+
+# 볼륨 정의 (유지)
+volumes:
+  postgres_data:
