@@ -36,6 +36,9 @@
 ## 🏗 System Architecture
 
 
+![Image](https://github.com/user-attachments/assets/fadb712e-68ac-4060-8d5c-1cb9946d53fc)
+
+
 1. **Client (React Native)**: 사용자 경험 중심의 UI/UX
 2. **API Server (NestJS)**: 모듈형 아키텍처를 기반으로 한 확장성 있는 비즈니스 로직 처리.
 3. **Task Engine**: 스케줄러를 통한 자동 과업 생성 및 통계 데이터 산출.
