@@ -29,7 +29,7 @@
 
 ### Frontend
 - **Framework**: React Native (Cross-platform)
-- **State Management**: Redux Toolkit / React Query (사용 중인 라이브러리로 수정)
+- **State Management**: Redux Toolkit / React Query 
 
 ---
 
