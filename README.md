@@ -5,7 +5,9 @@
 
 ---
 
+![Image](https://github.com/user-attachments/assets/0e1039d4-f763-4bd8-94c7-4c29ce28babd)
 
+![Image](https://github.com/user-attachments/assets/8aebbd9d-fd54-4021-bbe6-e1c1e629e760)
 
 ### 1. 지능형 Task 관리 및 자동화
 - **Recurring Tasks**: 반복 주기를 설정하여 청소, 분리수거 등 정기적인 과업을 자동 생성합니다.
@@ -15,7 +17,7 @@
 - **Retrospects**: 수행된 과업에 대한 상호 피드백 시스템을 통해 단순 수행 여부를 넘어 퀄리티를 관리합니다.
 
 ### 3. 보안 및 권한 제어
-- **RBAC (Role-Based Access Control)**: 그룹장과 일반 멤버의 권한을 분리하여 Task 상태 변경 및 그룹 설정을 안전하게 통제합니다.
+- **RBAC (Role-Based Acess Control)**: 그룹장과 일반 멤버의 권한을 분리하여 Task 상태 변경 및 그룹 설정을 안전하게 통제합니다.
 - **JWT Auth**: NestJS의 Guard를 활용한 보안 인증으로 개인 및 그룹 데이터를 보호합니다.
 
 ---
